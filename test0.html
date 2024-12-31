@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>绚丽烟花和发光文字</title>
+  <style>
+    /* 页面背景 */
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #000030, #000000);
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* 烟花容器 */
+    .firework-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* 发光文字 */
+    .glowing-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Arial', sans-serif;
+      font-size: 50px;
+      font-weight: bold;
+      color: white;
+      text-align: center;
+      animation: glow 2s infinite alternate ease-in-out, colorChange 4s infinite linear;
+    }
+
+    /* 发光效果动画 */
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 10px #ff4dff, 0 0 20px #ff99ff, 0 0 30px #ffccff, 0 0 40px #ffffff;
+        opacity: 1;
+      }
+      100% {
+        text-shadow: 0 0 15px #ff1aff, 0 0 30px #ff4dff, 0 0 45px #ff99ff, 0 0 60px #ffccff;
+        opacity: 0.7;
+      }
+    }
+
+    /* 文字颜色动态变化 */
+    @keyframes colorChange {
+      0% {
+        color: #ff1aff;
+      }
+      25% {
+        color: #ffcc00;
+      }
+      50% {
+        color: #1aff1a;
+      }
+      75% {
+        color: #1a75ff;
+      }
+      100% {
+        color: #ff4dff;
+      }
+    }
+
+    /* 烟花粒子 */
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0));
+      opacity: 0.9;
+      animation: particleMove 2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards, particleFade 1.8s ease-out forwards;
+    }
+
+    /* 烟花粒子动画 */
+    @keyframes particleMove {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px)) scale(0.5);
+      }
+    }
+
+    @keyframes particleFade {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景发光文字 -->
+  <div class="glowing-text">在新的一年更加快乐！</div>
+
+  <!-- 烟花容器 -->
+  <div class="firework-container" id="firework-container"></div>
+
+  <script>
+    const container = document.getElementById("firework-container");
+
+    // 自动触发烟花，每 300 毫秒生成一次烟花
+    setInterval(() => {
+      const randomX = Math.random() * window.innerWidth;
+      const randomY = Math.random() * window.innerHeight;
+      createFirework(randomX, randomY);
+    }, 300); // 频率调整为 300 毫秒
+
+    // 点击触发烟花
+    document.body.addEventListener("click", (e) => {
+      createFirework(e.clientX, e.clientY);
+    });
+
+    // 创建烟花
+    function createFirework(x, y) {
+      for (let i = 0; i < 50; i++) { // 每次生成 50 粒，确保烟花更加饱满
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+
+        // 随机颜色（HSL）
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = Math.floor(Math.random() * 50) + 50;
+        const lightness = Math.floor(Math.random() * 40) + 40;
+        particle.style.background = `radial-gradient(circle, hsl(${hue}, ${saturation}%, ${lightness}%), transparent)`;
+
+        // 粒子方向与随机移动距离
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = Math.random() * 300 + 100; // 增加距离范围，让烟花效果更大
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        particle.style.setProperty("--dx", dx);
+        particle.style.setProperty("--dy", dy);
+
+        // 设置粒子初始位置
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+
+        // 添加粒子到容器
+        container.appendChild(particle);
+
+        // 动画结束后移除粒子
+        particle.addEventListener("animationend", () => {
+          particle.remove();
+        });
+      }
+    }
+  </script>
+</body>
+</html>
